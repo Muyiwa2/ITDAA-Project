@@ -18,6 +18,7 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
+#Q 1
 csv_file = 'heart.csv'
 heartdb = sql.connect("heart.db")
 df = pd.read_csv(csv_file, delimiter = ";")
@@ -60,9 +61,7 @@ print("COMMITED")
 df = pd.read_sql_query("SELECT * from heart", heartdb)
 print(df.head(20))
 
-
-print(df.to_string())
-
+#Q2a
 print("Cleaning Data")
 df.dropna(inplace = True)
 
@@ -71,14 +70,19 @@ for x in df.index:
     
 df.drop_duplicates(inplace = True)
 print("Cleaning Complete")
-print(df.to_string())
+#print(df.to_string())
 
+#Q2b
 categorical_vars = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'ca', 'thal']
 df['target'] = df['target'].astype(str)
 
+# Set up the figure and axes
 fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(20, 10))
+
+# Flatten axes for easier iteration
 axes = axes.flatten()
 
+# Plot distribution of classes for each categorical variable based on the target variable
 for i, var in enumerate(categorical_vars):
     sns.countplot(x=var, hue='target', data=df, ax=axes[i])
     axes[i].set_title(f'Distribution of {var} by Heart Disease Diagnosis')
@@ -87,13 +91,15 @@ for i, var in enumerate(categorical_vars):
     axes[i].legend(title='Heart Disease', loc='upper right')
     axes[i].tick_params(axis='x', rotation=45)
 
+# Remove any extra subplots
 for j in range(len(categorical_vars), len(axes)):
     fig.delaxes(axes[j])
 
+# Adjust layout
 plt.tight_layout()
 plt.show()
 
-
+#Q2c
 numerical_vars = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
 df['target'] = df['target'].astype(str)
 fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(20, 10))
@@ -113,6 +119,7 @@ for j in range(len(numerical_vars), len(axes)):
 plt.tight_layout()
 plt.show()
 
+#Q3.1
 df['target'] = df['target'].astype(int)
 
 # Handle missing values
@@ -138,8 +145,9 @@ y = df['target'].astype(int)  # Ensure target variable is integer
 # Split the data into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-
+#Q3.2
 # Initialize the models
+print("Initialize  models")
 log_reg = LogisticRegression(max_iter=10000, random_state=42)
 random_forest = RandomForestClassifier(n_estimators=100, random_state=42)
 svm = SVC(kernel='linear', random_state=42, probability=True)
